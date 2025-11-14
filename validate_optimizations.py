@@ -90,7 +90,7 @@ def validate_notebook(notebook_path):
     
     # Test 6: Optimized data collection (toPandas instead of collect)
     print("\n6. Testing for optimized data collection...")
-    cells_to_check = [15, 20, 21]
+    cells_to_check = [15, 19, 20, 21]  # Added Cell 19
     pandas_count = 0
     collect_count = 0
     
@@ -105,7 +105,7 @@ def validate_notebook(notebook_path):
     print(f"   Cells using toPandas(): {pandas_count}")
     print(f"   Cells using collect() inefficiently: {collect_count}")
     
-    if pandas_count >= 2:
+    if pandas_count >= 3:  # Updated from 2 to 3
         print("   ✅ PASSED: Multiple cells use optimized toPandas()")
     else:
         print("   ❌ FAILED: Not enough cells use toPandas()")
@@ -164,6 +164,23 @@ def validate_notebook(notebook_path):
         print("   ✅ PASSED: Cell 22 typo fixed")
     else:
         print("   ⚠️  WARNING: Could not verify cell 22 content")
+    
+    # Test 11: Error handling in Cell 5
+    print("\n11. Testing for error handling in data loading...")
+    cell_5_source = ''.join(notebook['cells'][5].get('source', []))
+    
+    if 'try:' in cell_5_source and 'except' in cell_5_source:
+        print("   ✅ PASSED: Cell 5 has error handling")
+    else:
+        print("   ❌ FAILED: Cell 5 lacks error handling")
+        all_passed = False
+    
+    # Test 12: Path flexibility in Cell 5
+    print("\n12. Testing for path flexibility...")
+    if 'csv_paths' in cell_5_source or 'for csv_path' in cell_5_source:
+        print("   ✅ PASSED: Cell 5 supports multiple paths")
+    else:
+        print("   ⚠️  WARNING: Cell 5 may use hardcoded path")
     
     # Final summary
     print("\n" + "=" * 60)
